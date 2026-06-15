@@ -1,0 +1,4 @@
+.user-card { padding: 24rpx; }
+.tag { padding: 6rpx 16rpx; border-radius: 100rpx; font-size: 24rpx; }
+.tag.old { background: #FFE4D6; color: #FF6B35; }
+.tag.new { background: #D6F0FF; color: #2980B9; }
