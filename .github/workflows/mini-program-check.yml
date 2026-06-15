@@ -1,0 +1,83 @@
+# ============================================================
+# Mini Program Code Quality Check
+# Trigger: push/PR 涉及小程序文件时
+# 检查：JS 语法、JSON 合法性、文件结构完整性
+# ============================================================
+name: Mini Program Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'miniprogram-user/**'
+      - 'miniprogram-merchant/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'miniprogram-user/**'
+      - 'miniprogram-merchant/**'
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Mini Program Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        app: [miniprogram-user, miniprogram-merchant]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Validate JSON files (${{ matrix.app }})
+        run: |
+          echo "Checking ${{ matrix.app }} JSON files..."
+          find ${{ matrix.app }} -name "*.json" -print0 | while IFS= read -r -d '' f; do
+            echo "  → $f"
+            python3 -m json.tool "$f" > /dev/null || { echo "ERROR: Invalid JSON: $f"; exit 1; }
+          done
+          echo "All JSON files valid ✓"
+
+      - name: Validate JS syntax (${{ matrix.app }})
+        run: |
+          echo "Checking ${{ matrix.app }} JS syntax..."
+          find ${{ matrix.app }} -name "*.js" -print0 | while IFS= read -r -d '' f; do
+            echo "  → $f"
+            node --check "$f" || { echo "ERROR: Syntax error: $f"; exit 1; }
+          done
+          echo "All JS files valid ✓"
+
+      - name: Check required pages exist (${{ matrix.app }})
+        run: |
+          echo "Checking ${{ matrix.app }} page structure..."
+          PAGES=$(python3 -c "
+          import json
+          with open('${{ matrix.app }}/app.json') as f:
+              data = json.load(f)
+          for p in data.get('pages', []):
+              print(p)
+          ")
+          for page in $PAGES; do
+            for ext in js json wxml wxss; do
+              if [ ! -f "${{ matrix.app }}/$page.$ext" ]; then
+                echo "WARNING: Missing $page.$ext"
+              fi
+            done
+          done
+          echo "Page structure check done ✓"
+
+      - name: File size check (warn > 200KB)
+        run: |
+          echo "Checking for oversized files in ${{ matrix.app }}..."
+          find ${{ matrix.app }} -type f -size +200k | while read f; do
+            size=$(du -h "$f" | cut -f1)
+            echo "WARNING: Large file ($size): $f"
+          done
+          echo "Size check done ✓"
