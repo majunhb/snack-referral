@@ -1,0 +1,43 @@
+<wxs module="filter">
+module.exports = {
+  filtered: function(coupons, activeTab) {
+    if (activeTab === 0) return coupons;
+    if (activeTab === 1) return [].concat(coupons).filter(function(c) { return c.status === 0; });
+    if (activeTab === 2) return [].concat(coupons).filter(function(c) { return c.status === 1; });
+    if (activeTab === 3) return [].concat(coupons).filter(function(c) { return c.status === 2; });
+    return coupons;
+  }
+};
+</wxs>
+
+<view class="container">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="*this"
+          class="tab {{activeTab === index ? 'active' : ''}}"
+          data-idx="{{index}}"
+          bindtap="switchTab">{{item}}</view>
+  </view>
+
+  <view class="empty" wx:if="{{coupons.length === 0}}">
+    <view class="empty-icon">🎫</view>
+    <view class="text-mute">暂无权益券</view>
+  </view>
+
+  <block wx:for="{{coupons}}" wx:key="couponId">
+    <view wx:if="{{activeTab === 0 || (activeTab === 1 && item.status === 0) || (activeTab === 2 && item.status === 1) || (activeTab === 3 && item.status === 2)}}" class="coupon {{item.status === 0 ? 'usable' : 'used'}}">
+      <view class="coupon-left">
+        <view class="coupon-value" wx:if="{{item.couponType === 1}}">¥{{item.maxAmount}}</view>
+        <view class="coupon-value" wx:else>{{item.discountRate * 10}} 折</view>
+        <view class="coupon-condition">{{item.couponType === 1 ? '免单券' : '折扣券'}}</view>
+      </view>
+      <view class="coupon-right">
+        <view class="coupon-title">{{item.couponType === 1 ? '老带新奖励' : '新客首单折扣'}}</view>
+        <view class="coupon-source">来源: {{item.sourceUserId ? '邀请好友' : '新客注册'}}</view>
+        <view class="coupon-expire">有效期至: {{item.expireTime}}</view>
+        <view class="coupon-status status-{{item.status}}">
+          {{item.status === 0 ? '可使用' : item.status === 1 ? '已使用' : '已过期'}}
+        </view>
+      </view>
+    </view>
+  </block>
+</view>
