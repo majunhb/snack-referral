@@ -1,0 +1,4 @@
+.tag { padding: 6rpx 16rpx; border-radius: 100rpx; font-size: 24rpx; }
+.tag.success { background: #D5F5E3; color: #27AE60; }
+.tag.warn { background: #FFF3E0; color: #FF6B35; }
+.price { font-size: 30rpx; font-weight: 700; color: #FF6B35; }
