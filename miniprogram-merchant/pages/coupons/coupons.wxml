@@ -1,0 +1,15 @@
+<view class="container">
+  <view class="card"><text class="subtitle">总券数: {{total}}</text></view>
+  <view wx:for="{{list}}" wx:key="couponId" class="card">
+    <view class="row">
+      <view class="flex-1">
+        <view class="title">券 #{{item.couponId}} - {{item.couponType === 1 ? '免单券' : '折扣券'}}</view>
+        <view class="text-mute">所属用户: {{item.userId}}</view>
+      </view>
+      <view class="tag status-{{item.status}}">
+        {{item.status === 0 ? '未用' : item.status === 1 ? '已用' : '过期'}}
+      </view>
+    </view>
+    <view class="text-mute mt-8">过期: {{item.expireTime}}</view>
+  </view>
+</view>
