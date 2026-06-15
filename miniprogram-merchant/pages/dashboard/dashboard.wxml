@@ -1,0 +1,57 @@
+<view class="container" wx:if="{{report}}">
+  <view class="hero">
+    <view class="hero-title">📊 实时数据看板</view>
+    <view class="hero-sub">数据每 30 秒自动刷新</view>
+  </view>
+
+  <view class="kpi-grid">
+    <view class="kpi-card kpi-orange">
+      <view class="kpi-label">总用户数</view>
+      <view class="kpi-num">{{report.totalUsers}}</view>
+    </view>
+    <view class="kpi-card kpi-green">
+      <view class="kpi-label">老客户</view>
+      <view class="kpi-num">{{report.oldUsers}}</view>
+    </view>
+    <view class="kpi-card kpi-blue">
+      <view class="kpi-label">新客户</view>
+      <view class="kpi-num">{{report.newUsers}}</view>
+    </view>
+    <view class="kpi-card kpi-purple">
+      <view class="kpi-label">已完成首单</view>
+      <view class="kpi-num">{{report.firstOrders}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="title">💰 营收指标</view>
+    <view class="metric-row">
+      <text>支付订单数</text>
+      <text class="text-success">{{report.paidOrders}}</text>
+    </view>
+    <view class="metric-row">
+      <text>总营收 (元)</text>
+      <text class="text-success">¥{{report.totalRevenue}}</text>
+    </view>
+    <view class="metric-row">
+      <text>拉新 ROI</text>
+      <text class="text-success">{{report.roi}}</text>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="title">🎟️ 权益发放</view>
+    <view class="metric-row">
+      <text>已发免单券</text>
+      <text class="text-danger">{{report.couponGranted}}</text>
+    </view>
+    <view class="metric-row">
+      <text>在用券数</text>
+      <text>{{report.couponCount}}</text>
+    </view>
+    <view class="metric-row">
+      <text>完成推荐关系</text>
+      <text>{{report.referralCount}}</text>
+    </view>
+  </view>
+</view>
