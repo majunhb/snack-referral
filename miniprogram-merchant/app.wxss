@@ -1,0 +1,12 @@
+page { background: #F5F7FA; font-family: -apple-system, "PingFang SC", sans-serif; color: #2C3E50; }
+.container { padding: 24rpx; }
+.card { background: #fff; border-radius: 16rpx; padding: 32rpx; margin-bottom: 24rpx; box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.04); }
+.title { font-size: 32rpx; font-weight: 700; color: #2C3E50; }
+.subtitle { font-size: 26rpx; color: #7F8C8D; }
+.btn { background: #2C3E50; color: #fff; border-radius: 8rpx; padding: 20rpx 0; text-align: center; font-size: 28rpx; }
+.row { display: flex; align-items: center; }
+.col { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; }
+.text-mute { color: #95A5A6; font-size: 24rpx; }
+.text-danger { color: #E74C3C; }
+.text-success { color: #27AE60; }
