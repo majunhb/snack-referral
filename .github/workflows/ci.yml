@@ -1,0 +1,174 @@
+# ============================================================
+# CI Pipeline — 小吃店"老带新"裂变营销小程序
+# Trigger: push / PR → main
+# Jobs: lint → test → build check
+# ============================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - '!server/*.md'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'server/**'
+      - '!server/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '18'
+  # DB credentials for test MySQL service container
+  DB_HOST: 127.0.0.1
+  DB_PORT: 3306
+  DB_NAME: snack_referral
+  DB_USER: root
+  DB_PASSWORD: root123
+  REDIS_HOST: 127.0.0.1
+  REDIS_PORT: 6379
+  JWT_SECRET: ci_test_secret_do_not_use_in_prod
+  JWT_EXPIRES_IN: 1h
+  AES_KEY: this_is_a_32byte_key_for_aes_enc!!
+  NODE_ENV: test
+
+jobs:
+  # ── 1. Lint ──────────────────────────────────────────────
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Run ESLint
+        working-directory: server
+        run: npx eslint src/ --max-warnings 0
+
+  # ── 2. Test (with MySQL + Redis services) ─────────────
+  test:
+    name: Test (Jest + MySQL + Redis)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: lint
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: snack_referral
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h 127.0.0.1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7.0-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install dependencies
+        working-directory: server
+        run: npm ci
+
+      - name: Wait for MySQL
+        run: |
+          for i in $(seq 1 30); do
+            if mysqladmin ping -h 127.0.0.1 -u root -proot123 --silent; then
+              echo "MySQL ready"
+              break
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
+
+      - name: Init DB schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot123 snack_referral < server/sql/schema.sql
+          echo "Schema imported OK"
+
+      - name: Run Jest tests
+        working-directory: server
+        run: npx jest --ci --coverage --maxWorkers=2
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: server/coverage/
+          retention-days: 7
+
+  # ── 3. Build check ────────────────────────────────────
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [lint, test]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install & build check
+        working-directory: server
+        run: |
+          npm ci
+          # Verify the app loads without crashing (syntax / require check)
+          node -e "
+            process.env.DB_HOST='127.0.0.1';
+            process.env.DB_NAME='test';
+            process.env.DB_USER='root';
+            process.env.DB_PASSWORD='test';
+            process.env.REDIS_HOST='127.0.0.1';
+            process.env.JWT_SECRET='test';
+            process.env.AES_KEY='this_is_a_32byte_key_for_aes_enc!!';
+            require('./app');
+            console.log('✓ App module loaded successfully');
+            process.exit(0);
+          "
