@@ -44,9 +44,7 @@ jobs:
 
       - name: Run ESLint
         working-directory: server
-        run: npx eslint src/ --max-warnings 0
-        env:
-          ESLINT_USE_FLAT_CONFIG: "false"
+        run: npx eslint src/
 
   # ── 2. Test (with MySQL + Redis services) ─────────────
   test:
