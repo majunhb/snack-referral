@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: snack-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: snack_referral
+    ports: ['3306:3306']
+    volumes:
+      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7.0-alpine
+    container_name: snack-redis
+    restart: always
+    ports: ['6379:6379']
+
+  api:
+    build: ./server
+    container_name: snack-api
+    restart: always
+    depends_on: [mysql, redis]
+    environment:
+      DB_HOST: mysql
+      REDIS_HOST: redis
+    ports: ['3000:3000']
+
+volumes:
+  mysql_data:
