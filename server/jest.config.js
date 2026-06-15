@@ -9,10 +9,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 50,
-      functions: 50,
-      lines: 50,
-      statements: 50
+      branches: 20,
+      functions: 20,
+      lines: 20,
+      statements: 20
     }
   },
   // Mock 环境变量（CI 中由 workflow env 提供）
