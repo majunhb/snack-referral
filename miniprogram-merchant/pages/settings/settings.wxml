@@ -1,0 +1,11 @@
+<view class="container">
+  <view class="card">
+    <view class="title">⚙️ 系统配置</view>
+    <view class="text-mute">实时生效，下单与发券均会读取</view>
+  </view>
+  <view wx:for="{{configs}}" wx:key="configKey" class="card">
+    <view class="title">{{item.configKey}}</view>
+    <view class="text-mute">{{item.description}}</view>
+    <view class="value">当前值: <text class="text-success">{{item.configValue}}</text></view>
+  </view>
+</view>
