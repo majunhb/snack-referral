@@ -1,0 +1,55 @@
+<view class="container">
+  <view class="header-card">
+    <view class="user-row">
+      <view class="user-info">
+        <view class="title-md">{{userInfo.nickname || '小吃客'}}</view>
+        <view class="text-mute">{{userInfo.phone}}</view>
+      </view>
+    </view>
+    <view class="status-tag {{isOldCustomer ? 'old' : 'new'}}">
+      {{isOldCustomer ? '🎉 老客户' : '✨ 新客户'}}
+    </view>
+  </view>
+
+  <view class="stats-row">
+    <view class="stat-item">
+      <view class="stat-num">{{inviteCount}}</view>
+      <view class="stat-label">已邀请</view>
+    </view>
+    <view class="divider"></view>
+    <view class="stat-item">
+      <view class="stat-num">{{pendingCoupons}}</view>
+      <view class="stat-label">可用券</view>
+    </view>
+  </view>
+
+  <view class="action-card" bindtap="goInvite">
+    <view class="action-title">📲 邀请好友，各得一张券</view>
+    <view class="action-sub">你得 30 元免单券 · 好友得 8.5 折</view>
+    <view class="btn-primary">立即邀请</view>
+  </view>
+
+  <view class="quick-grid">
+    <view class="quick-item" bindtap="quickOrder">
+      <view class="quick-icon">🍜</view>
+      <view class="quick-text">点单</view>
+    </view>
+    <view class="quick-item" bindtap="goCoupons">
+      <view class="quick-icon">🎟️</view>
+      <view class="quick-text">我的券</view>
+    </view>
+    <view class="quick-item" bindtap="goOrders">
+      <view class="quick-icon">📋</view>
+      <view class="quick-text">消费记录</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="title-md">🎁 活动规则</view>
+    <view class="rule-item">1. 分享你的专属二维码给好友</view>
+    <view class="rule-item">2. 好友通过你的码进入小程序并完成首单</view>
+    <view class="rule-item">3. 你将获得 30 元免单券（封顶）</view>
+    <view class="rule-item">4. 好友将获得 8.5 折优惠券</view>
+    <view class="rule-item">5. 券有效期 30 天，每单限用 1 张</view>
+  </view>
+</view>
