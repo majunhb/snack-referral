@@ -14,7 +14,7 @@ process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_jwt_secret';
 process.env.AES_KEY = process.env.AES_KEY || 'this_is_a_32byte_key_for_aes_enc!!';
 process.env.NODE_ENV = 'test';
 
-const app = require('../app');
+const app = require('../../app');
 
 describe('Server smoke tests', () => {
 
