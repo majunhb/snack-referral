@@ -3,7 +3,7 @@
  */
 const Router = require('express').Router;
 const bcrypt = require('bcryptjs');
-const { Op, fn, col, literal } = require('sequelize');
+const { Op } = require('sequelize');
 const { Admin, User, Order, Coupon, Referral } = require('../models');
 const { sign, verifyAdmin } = require('../middlewares/auth');
 const { ApiResponse, BizError } = require('../utils/response');
