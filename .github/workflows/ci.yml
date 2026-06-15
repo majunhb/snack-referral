@@ -22,21 +22,6 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  NODE_VERSION: '18'
-  # DB credentials for test MySQL service container
-  DB_HOST: 127.0.0.1
-  DB_PORT: 3306
-  DB_NAME: snack_referral
-  DB_USER: root
-  DB_PASSWORD: root123
-  REDIS_HOST: 127.0.0.1
-  REDIS_PORT: 6379
-  JWT_SECRET: ci_test_secret_do_not_use_in_prod
-  JWT_EXPIRES_IN: 1h
-  AES_KEY: this_is_a_32byte_key_for_aes_enc!!
-  NODE_ENV: test
-
 jobs:
   # ── 1. Lint ──────────────────────────────────────────────
   lint:
@@ -45,23 +30,21 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: server/package-lock.json
+          node-version: 18
 
       - name: Install dependencies
         working-directory: server
-        run: npm ci
+        run: npm install
 
       - name: Run ESLint
         working-directory: server
         run: npx eslint src/ --max-warnings 0
+        env:
+          ESLINT_USE_FLAT_CONFIG: "false"
 
   # ── 2. Test (with MySQL + Redis services) ─────────────
   test:
@@ -79,7 +62,7 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1"
+          --health-cmd "mysqladmin ping -h 127.0.0.1 --silent"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -94,20 +77,29 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: snack_referral
+      DB_USER: root
+      DB_PASSWORD: root123
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: 6379
+      JWT_SECRET: ci_test_secret_do_not_use_in_prod
+      JWT_EXPIRES_IN: 1h
+      AES_KEY: this_is_a_32byte_key_for_aes_enc!!
+      NODE_ENV: test
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: server/package-lock.json
+          node-version: 18
 
       - name: Install dependencies
         working-directory: server
-        run: npm ci
+        run: npm install
 
       - name: Wait for MySQL
         run: |
@@ -145,20 +137,16 @@ jobs:
     needs: [lint, test]
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-          cache-dependency-path: server/package-lock.json
+          node-version: 18
 
       - name: Install & build check
         working-directory: server
         run: |
-          npm ci
+          npm install
           # Verify the app loads without crashing (syntax / require check)
           node -e "
             process.env.DB_HOST='127.0.0.1';
@@ -169,6 +157,6 @@ jobs:
             process.env.JWT_SECRET='test';
             process.env.AES_KEY='this_is_a_32byte_key_for_aes_enc!!';
             require('./app');
-            console.log('✓ App module loaded successfully');
+            console.log('App module loaded successfully');
             process.exit(0);
           "
