@@ -13,7 +13,7 @@ const router = Router();
 // ========== 1. 用户相关 ==========
 router.post('/user/login', registerLimit, async (req, res, next) => {
   try {
-    const { platform, openid, phone, code, nickname, avatarUrl, referrerId } = req.body;
+    const { platform, openid, phone, nickname, avatarUrl, referrerId } = req.body;
     if (!platform || !openid) throw new BizError('参数缺失', 1001);
     const user = await userService.loginOrRegister({ platform, openid, phone, nickname, avatarUrl, referrerId });
     const token = sign({ userId: user.userId, role: 'user' });
