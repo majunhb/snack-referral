@@ -16,7 +16,7 @@ function verify(req, res, next) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
-  } catch (e) {
+  } catch (_e) {
     return res.status(401).json(ApiResponse.fail(401, '登录已过期'));
   }
 }
@@ -31,7 +31,7 @@ function verifyAdmin(req, res, next) {
     if (decoded.role !== 'admin') return res.status(403).json(ApiResponse.fail(403, '无权限'));
     req.admin = decoded;
     next();
-  } catch (e) {
+  } catch (_e) {
     return res.status(401).json(ApiResponse.fail(401, '登录已过期'));
   }
 }
