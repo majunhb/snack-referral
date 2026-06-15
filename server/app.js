@@ -44,9 +44,12 @@ app.use((req, res) => res.status(404).json({ code: 404, msg: '接口不存在' }
 // 全局错误处理
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`🚀 服务已启动: http://localhost:${PORT}`);
-  logger.info(`📖 API 文档: http://localhost:${PORT}/api`);
-});
+// Only start listening when run directly (not when required by tests)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    logger.info(`🚀 服务已启动: http://localhost:${PORT}`);
+    logger.info(`📖 API 文档: http://localhost:${PORT}/api`);
+  });
+}
 
 module.exports = app;
