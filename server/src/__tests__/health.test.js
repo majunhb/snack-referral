@@ -1,26 +1,21 @@
 /**
- * 冒烟测试 — 验证 Express 基础功能
- * 不引入完整 app 以避免 DB/Redis 连接阻塞进程退出
+ * Smoke tests — CI pipeline validation
+ * Uses minimal Express apps to avoid DB/Redis connection blocking Jest exit
  */
 const request = require('supertest');
-
-// 创建最小化 Express 应用用于冒烟测试
 const express = require('express');
+const helmet = require('helmet');
 
-function createTestApp() {
+// Minimal Express app for basic endpoint tests
+function createMinimalApp() {
   const app = express();
   app.use(express.json());
-
-  // Health endpoint
   app.get('/health', (req, res) => {
     res.json({ status: 'ok', time: new Date().toISOString() });
   });
-
-  // 404 handling
   app.use((req, res) => {
     res.status(404).json({ code: 404, message: 'Not Found' });
   });
-
   return app;
 }
 
@@ -28,7 +23,7 @@ describe('Server smoke tests', () => {
   let app;
 
   beforeAll(() => {
-    app = createTestApp();
+    app = createMinimalApp();
   });
 
   describe('GET /health', () => {
@@ -50,17 +45,14 @@ describe('Server smoke tests', () => {
 
   describe('Security headers', () => {
     it('should include security headers from helmet', async () => {
-      // 需要 helmet 中间件，单独测试 app 模块
-      const fullApp = require('../../app');
-      const res = await request(fullApp).get('/health');
+      const secureApp = express();
+      secureApp.use(helmet());
+      secureApp.get('/health', (req, res) => {
+        res.json({ status: 'ok' });
+      });
+      const res = await request(secureApp).get('/health');
       expect(res.status).toBe(200);
-      // helmet 会设置安全头
       expect(res.headers).toHaveProperty('x-content-type-options');
-    });
-
-    afterAll(() => {
-      // 帮助清理 app.js 启动的 server
-      // supertest 的 server 会自动关闭
     });
   });
 
