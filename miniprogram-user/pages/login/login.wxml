@@ -1,0 +1,12 @@
+<view class="container login-container">
+  <view class="logo">🍜</view>
+  <view class="title-xl">老王小吃</view>
+  <view class="slogan">地道小吃 · 老带新各得一张券</view>
+
+  <view class="btn-primary mt-64" bindtap="wxLogin">💚 微信一键登录</view>
+  <view class="btn-secondary mt-24" bindtap="aliLogin">💙 支付宝登录</view>
+
+  <view class="agreement mt-32">
+    登录即代表您同意 <text class="text-orange">《用户协议》</text> 与 <text class="text-orange">《隐私政策》</text>
+  </view>
+</view>
