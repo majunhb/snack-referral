@@ -11,7 +11,7 @@ module.exports = {
     sourceType: 'script'
   },
   rules: {
-    'no-unused-vars': ['warn', { argsIgnorePattern: '^_|next|req|res' }],
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' }],
     'no-console': 'off',
     'no-undef': 'error',
     'no-extra-semi': 'warn',
