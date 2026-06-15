@@ -9,7 +9,7 @@ services:
       MYSQL_DATABASE: snack_referral
     ports: ['3306:3306']
     volumes:
-      - ./sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./server/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - mysql_data:/var/lib/mysql
 
   redis:
@@ -22,10 +22,22 @@ services:
     build: ./server
     container_name: snack-api
     restart: always
-    depends_on: [mysql, redis]
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    env_file:
+      - ./server/.env
     environment:
       DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: snack_referral
+      DB_USER: root
+      DB_PASSWORD: root123
       REDIS_HOST: redis
+      REDIS_PORT: 6379
+      NODE_ENV: production
     ports: ['3000:3000']
 
 volumes:
