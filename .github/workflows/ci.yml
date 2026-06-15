@@ -10,11 +10,13 @@ on:
     branches: [main]
     paths:
       - 'server/**'
+      - '.github/workflows/**'
       - '!server/*.md'
   pull_request:
     branches: [main]
     paths:
       - 'server/**'
+      - '.github/workflows/**'
       - '!server/*.md'
   workflow_dispatch:
 
