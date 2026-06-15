@@ -1,7 +1,6 @@
 /**
  * 订单 + 推荐结算服务
  */
-const { v4: uuidv4 } = require('uuid');
 const { Order, User, Referral } = require('../models');
 const { BizError } = require('../utils/response');
 const couponService = require('./couponService');
