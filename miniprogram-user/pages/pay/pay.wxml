@@ -1,0 +1,24 @@
+<view class="container" wx:if="{{order}}">
+  <view class="pay-card card">
+    <view class="amount">¥{{order.payAmount}}</view>
+    <view class="text-mute">订单 {{order.orderNo}}</view>
+  </view>
+
+  <view class="pay-methods card">
+    <view class="title-md">支付方式</view>
+    <view class="method-row">
+      <text>💚 微信支付</text>
+      <text wx:if="{{payType === 1}}">✓</text>
+    </view>
+    <view class="method-row">
+      <text>💙 支付宝</text>
+      <text wx:if="{{payType === 2}}">✓</text>
+    </view>
+  </view>
+
+  <view wx:if="{{order.couponUsed === 1}}" class="card">
+    <view class="text-orange">🎟️ 已使用券, 优惠 ¥{{order.discountAmount}}</view>
+  </view>
+
+  <view class="btn-primary mt-32" bindtap="doPay">确认支付 ¥{{order.payAmount}}</view>
+</view>
