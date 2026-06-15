@@ -1,0 +1,22 @@
+<view class="container">
+  <view class="card"><text class="subtitle">总订单数: {{total}}</text></view>
+  <view wx:for="{{list}}" wx:key="orderId" class="card">
+    <view class="row">
+      <view class="flex-1">
+        <view class="title">订单 #{{item.orderNo}}</view>
+        <view class="text-mute">{{item.createTime}}</view>
+      </view>
+      <view class="tag {{item.payStatus === 1 ? 'success' : 'warn'}}">
+        {{item.payStatus === 1 ? '已支付' : '未支付'}}
+      </view>
+    </view>
+    <view class="row mt-16">
+      <view class="text-mute flex-1">
+        {{item.payType === 1 ? '微信支付' : '支付宝'}}
+        <text wx:if="{{item.isFirstOrder === 1}}"> · 🎁首单</text>
+        <text wx:if="{{item.couponUsed === 1}}"> · 🎟️用券</text>
+      </view>
+      <view class="price">¥{{item.payAmount}}</view>
+    </view>
+  </view>
+</view>
