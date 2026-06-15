@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="card">
+    <view class="row">
+      <text class="subtitle">总人数: {{total}}</text>
+    </view>
+  </view>
+  <view wx:for="{{list}}" wx:key="userId" class="card user-card">
+    <view class="row">
+      <view class="flex-1">
+        <view class="title">用户 #{{item.userId}} {{item.nickname}}</view>
+        <view class="text-mute">注册: {{item.createTime}}</view>
+      </view>
+      <view class="tag {{item.status === 1 ? 'old' : 'new'}}">
+        {{item.status === 1 ? '老客' : '新客'}}
+      </view>
+    </view>
+    <view wx:if="{{item.referrerId}}" class="text-mute">推荐人 ID: {{item.referrerId}}</view>
+  </view>
+</view>
