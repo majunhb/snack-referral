@@ -3,8 +3,6 @@
  * 数据库初始化通过 sql/schema.sql 完成，这里仅做 ORM 映射
  */
 const { Sequelize, DataTypes } = require('sequelize');
-const path = require('path');
-
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
