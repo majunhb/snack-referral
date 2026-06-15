@@ -1,0 +1,15 @@
+.hero { padding: 32rpx 0; }
+.hero-title { font-size: 40rpx; font-weight: 700; }
+.hero-sub { color: #95A5A6; font-size: 24rpx; margin-top: 8rpx; }
+
+.kpi-grid { display: flex; flex-wrap: wrap; gap: 16rpx; margin: 24rpx 0; }
+.kpi-card { flex: 1 1 40%; padding: 32rpx; border-radius: 16rpx; color: #fff; }
+.kpi-orange { background: linear-gradient(135deg, #FF6B35, #F7931E); }
+.kpi-green  { background: linear-gradient(135deg, #27AE60, #2ECC71); }
+.kpi-blue   { background: linear-gradient(135deg, #2980B9, #3498DB); }
+.kpi-purple { background: linear-gradient(135deg, #8E44AD, #9B59B6); }
+.kpi-label { font-size: 24rpx; opacity: 0.9; }
+.kpi-num { font-size: 56rpx; font-weight: 700; margin-top: 8rpx; }
+
+.metric-row { display: flex; justify-content: space-between; padding: 20rpx 0; border-bottom: 1rpx solid #ECF0F1; font-size: 28rpx; }
+.metric-row:last-child { border-bottom: none; }
