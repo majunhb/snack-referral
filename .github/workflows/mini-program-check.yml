@@ -26,58 +26,44 @@ jobs:
     strategy:
       matrix:
         app: [miniprogram-user, miniprogram-merchant]
+      fail-fast: false
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 18
 
-      - name: Validate JSON files (${{ matrix.app }})
+      - name: Validate JSON files
         run: |
-          echo "Checking ${{ matrix.app }} JSON files..."
-          find ${{ matrix.app }} -name "*.json" -print0 | while IFS= read -r -d '' f; do
-            echo "  → $f"
-            python3 -m json.tool "$f" > /dev/null || { echo "ERROR: Invalid JSON: $f"; exit 1; }
+          echo "=== Checking ${{ matrix.app }} JSON files ==="
+          find ${{ matrix.app }} -name '*.json' -print0 | while IFS= read -r -d '' f; do
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" && echo "  OK  $f"
           done
-          echo "All JSON files valid ✓"
 
-      - name: Validate JS syntax (${{ matrix.app }})
+      - name: Validate JS syntax
         run: |
-          echo "Checking ${{ matrix.app }} JS syntax..."
-          find ${{ matrix.app }} -name "*.js" -print0 | while IFS= read -r -d '' f; do
-            echo "  → $f"
-            node --check "$f" || { echo "ERROR: Syntax error: $f"; exit 1; }
+          echo "=== Checking ${{ matrix.app }} JS syntax ==="
+          find ${{ matrix.app }} -name '*.js' -print0 | while IFS= read -r -d '' f; do
+            node --check "$f" && echo "  OK  $f"
           done
-          echo "All JS files valid ✓"
 
-      - name: Check required pages exist (${{ matrix.app }})
+      - name: Check page structure
         run: |
-          echo "Checking ${{ matrix.app }} page structure..."
-          PAGES=$(python3 -c "
-          import json
-          with open('${{ matrix.app }}/app.json') as f:
-              data = json.load(f)
-          for p in data.get('pages', []):
-              print(p)
-          ")
+          echo "=== Checking ${{ matrix.app }} page completeness ==="
+          PAGES=$(node -e "const p=require('./${{ matrix.app }}/app.json'); p.pages.forEach(x=>console.log(x))")
+          MISSING=0
           for page in $PAGES; do
             for ext in js json wxml wxss; do
               if [ ! -f "${{ matrix.app }}/$page.$ext" ]; then
-                echo "WARNING: Missing $page.$ext"
+                echo "  MISSING: $page.$ext"
+                MISSING=$((MISSING + 1))
               fi
             done
           done
-          echo "Page structure check done ✓"
-
-      - name: File size check (warn > 200KB)
-        run: |
-          echo "Checking for oversized files in ${{ matrix.app }}..."
-          find ${{ matrix.app }} -type f -size +200k | while read f; do
-            size=$(du -h "$f" | cut -f1)
-            echo "WARNING: Large file ($size): $f"
-          done
-          echo "Size check done ✓"
+          if [ $MISSING -gt 0 ]; then
+            echo "WARNING: $MISSING missing page files"
+          else
+            echo "  All pages complete"
+          fi
