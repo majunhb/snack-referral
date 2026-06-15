@@ -121,7 +121,7 @@ jobs:
 
       - name: Run Jest tests
         working-directory: server
-        run: npx jest --ci --coverage --maxWorkers=2
+        run: npx jest --ci --coverage --maxWorkers=2 --forceExit
 
       - name: Upload coverage report
         if: always()
