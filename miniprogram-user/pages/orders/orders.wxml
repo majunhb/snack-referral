@@ -1,0 +1,29 @@
+<view class="container">
+  <view class="empty" wx:if="{{orders.length === 0}}">
+    <view class="empty-icon">📋</view>
+    <view class="text-mute">暂无消费记录</view>
+  </view>
+
+  <view wx:for="{{orders}}" wx:key="orderId" class="order card">
+    <view class="row">
+      <view class="flex-1">
+        <view class="title-md">订单 {{item.orderNo}}</view>
+        <view class="text-mute">{{item.createTime}}</view>
+      </view>
+      <view class="status-text status-{{item.payStatus}}">
+        {{item.payStatus === 0 ? '待支付' : item.payStatus === 1 ? '已完成' : '已退款'}}
+      </view>
+    </view>
+    <view class="row mt-16">
+      <view class="text-mute flex-1">
+        {{item.payType === 1 ? '💚 微信支付' : '💙 支付宝'}}
+        <text wx:if="{{item.isFirstOrder === 1}}"> · 🎁 首单</text>
+        <text wx:if="{{item.couponUsed === 1}}"> · 🎟️ 已用券</text>
+      </view>
+      <view class="price">¥{{item.payAmount}}</view>
+    </view>
+    <view wx:if="{{item.couponUsed === 1}}" class="discount-line">
+      <text class="text-orange">已优惠 ¥{{item.discountAmount}}</text>
+    </view>
+  </view>
+</view>
