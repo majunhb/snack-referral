@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="invite-hero">
+    <view class="hero-title">邀请好友 各得一张券</view>
+    <view class="hero-sub">你得 30 元免单券 · 好友得 8.5 折</view>
+  </view>
+
+  <view class="qr-card">
+    <view class="qr-wrapper">
+      <image class="qr-img" src="{{qrCode}}" mode="aspectFit"></image>
+    </view>
+    <view class="qr-tip">长按或保存图片，邀请好友扫码</view>
+  </view>
+
+  <view class="btn-primary" bindtap="saveImage">📥 保存到相册</view>
+  <view class="btn-secondary mt-24" bindtap="copyLink">🔗 复制推荐链接</view>
+
+  <view class="stats-card card">
+    <view class="title-md">📊 邀请战绩</view>
+    <view class="stat-row">
+      <view class="col">
+        <view class="stat-num text-orange">{{inviteCount}}</view>
+        <view class="stat-label">已邀请</view>
+      </view>
+      <view class="col">
+        <view class="stat-num text-orange">{{completedCount}}</view>
+        <view class="stat-label">已完成首单</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rules card">
+    <view class="title-md">📖 活动规则</view>
+    <view class="rule-item">· 好友通过你的专属码注册并完成首单</view>
+    <view class="rule-item">· 你即获 30 元免单券（单笔封顶）</view>
+    <view class="rule-item">· 券自发放起 30 天有效</view>
+    <view class="rule-item">· 同一用户每日最多触发 5 次奖励</view>
+  </view>
+
+  <button class="share-btn" open-type="share">👋 立即分享给好友</button>
+</view>
