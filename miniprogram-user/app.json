@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/invite/invite",
+    "pages/coupons/coupons",
+    "pages/orders/orders",
+    "pages/pay/pay",
+    "pages/login/login"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FF6B35",
+    "navigationBarTitleText": "老王小吃",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#FFF5E6"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#FF6B35",
+    "backgroundColor": "#ffffff",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页" },
+      { "pagePath": "pages/coupons/coupons", "text": "权益" },
+      { "pagePath": "pages/orders/orders", "text": "记录" }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}
