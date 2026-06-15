@@ -1,5 +1,3 @@
-const { BizError } = require('../utils/response');
-
 /**
  * 防刷中间件：基于 Redis 的频控
  * - 同手机号：1 分钟内最多 1 次注册
