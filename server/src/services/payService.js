@@ -45,7 +45,7 @@ class PayService {
     }
   }
 
-  _wxSign({ method, url, body, privateKey, mchId, nonceStr, timestamp }) {
+  _wxSign({ method, url, body, privateKey, mchId: _mchId, nonceStr, timestamp }) {
     const message = `${method}\n${url}\n${timestamp}\n${nonceStr}\n${JSON.stringify(body)}\n`;
     return crypto.createHash('sha256').update(message + privateKey).digest('hex');
   }
@@ -58,7 +58,7 @@ class PayService {
   /**
    * 支付宝小程序支付 - alipay.trade.create
    */
-  async aliPay({ orderNo, amount, subject, buyerId }) {
+  async aliPay({ orderNo, amount, subject, buyerId: _buyerId }) {
     const appId = process.env.ALI_APPID;
     return {
       outTradeNo: orderNo,
